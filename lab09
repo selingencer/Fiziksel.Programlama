@@ -1,25 +1,37 @@
-byte hoparlorPin = 9;
-byte ledPin = 3;
+int piezoPin = 9;
+int potPin = A0;
+int butonPin = 2;
+int ledPin = 3;
+
+// Melodi
+int notalar[] = {262, 294, 330, 349, 392};
+int sureler[] = {300, 300, 300, 300, 300};
+int notaSayisi = 5;
 
 void setup() {
-  pinMode(hoparlorPin, OUTPUT);
+  pinMode(piezoPin, OUTPUT);
   pinMode(ledPin, OUTPUT);
-}
-
-void kendiSesimiz(long periyot, long sure) {
-  long dalga = periyot / 2;
-  for (long i = 0; i < sure * 1000L; i += periyot) {
-    digitalWrite(hoparlorPin, HIGH);
-    digitalWrite(ledPin, HIGH); 
-    delayMicroseconds(dalga);
-    digitalWrite(hoparlorPin, LOW);
-    digitalWrite(ledPin, LOW); 
-    delayMicroseconds(dalga);
-  }
+  pinMode(butonPin, INPUT_PULLUP);
 }
 
 void loop() {
-  for (long i = 15000; i >= 500; i = i / 2) {
-    kendiSesimiz(i, 200);
+
+  // Görev 1: Potansiyometre ile ses
+  int potDeger = analogRead(potPin);
+  int frekans = map(potDeger, 0, 1023, 100, 5000);
+  tone(piezoPin, frekans);
+
+  // Görev 2: Butona basınca melodi
+  if (digitalRead(butonPin) == LOW) {
+
+    for (int i = 0; i < notaSayisi; i++) {
+
+      digitalWrite(ledPin, HIGH);
+      tone(piezoPin, notalar[i], sureler[i]);
+      delay(sureler[i]);
+
+      digitalWrite(ledPin, LOW);
+      delay(50);
+    }
   }
 }
