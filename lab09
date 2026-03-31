@@ -1,4 +1,5 @@
-int piezoPin = 9;
+
+  int piezoPin = 9;
 int potPin = A0;
 int butonPin = 2;
 int ledPin = 3;
@@ -15,23 +16,26 @@ void setup() {
 }
 
 void loop() {
-
-  // Görev 1: Potansiyometre ile ses
-  int potDeger = analogRead(potPin);
-  int frekans = map(potDeger, 0, 1023, 100, 5000);
-  tone(piezoPin, frekans);
-
-  // Görev 2: Butona basınca melodi
+  // Sistem sadece butona basıldığında çalışsın
   if (digitalRead(butonPin) == LOW) {
-
+    
+    // Potansiyometre değerini okuyup 100-5000 arasına çeviriyoruz
+    int potDeger = analogRead(potPin);
+    int frekans = map(potDeger, 0, 1023, 100, 5000);
+    
+    // Melodi döngüsü
     for (int i = 0; i < notaSayisi; i++) {
-
       digitalWrite(ledPin, HIGH);
-      tone(piezoPin, notalar[i], sureler[i]);
+      
+      // Notalara potansiyometreden gelen frekansı ekliyoruz ki ses değişsin
+      tone(piezoPin, notalar[i] + frekans);
       delay(sureler[i]);
-
+      
       digitalWrite(ledPin, LOW);
       delay(50);
     }
+  } else {
+    // Butona basılmıyorsa sessiz kal
+    noTone(piezoPin);
   }
 }
